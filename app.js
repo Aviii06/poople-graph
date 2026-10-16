@@ -1,7 +1,7 @@
 (()=>{"use strict";
 const $=id=>document.getElementById(id);
 let G=window.GRAPH;if(Array.isArray(G))G={target:G[0],words:G[1],dist:G[2],next:G[3],neighbors:G[4],freq:G[5]||[]};
-if(!G||!G.words){$("details").textContent="Graph data missing — run export_site.py first.";return}
+if(!G||!G.words){$("details").textContent="Graph data missing, run export_site.py first.";return}
 const {words,dist,next,neighbors,freq}=G,n=words.length,TAU=Math.PI*2,CH=13,MONO='"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace';
 const T=words.indexOf(G.target),idx=new Map(words.map((w,i)=>[w,i])),maxD=Math.max(...dist);
 // ---------- colours ----------
@@ -107,7 +107,7 @@ function details(){const b=$("details"),intro=$("intro");if(sel<0){b.innerHTML="
   const d=dist[sel],ns=neighbors[sel];let h=`<div class="hr"></div><div class="title"><span style="color:${COL[sel]}">${words[sel].toUpperCase()}</span><span class="pill ${d<0?"bad":""}">${d<0?"stranded":d+(d===1?" move":" moves")}</span></div><p class="muted">${ns.length} one-letter neighbour${ns.length===1?"":"s"}</p>`;
   if(d>=0){const ls=ladders(sel);h+=`<button id="frame" class="pri" style="width:100%">Frame the route to POOP</button><h2>Shortest ladders${ls.length>=10?" (first 10)":""}</h2>`;
     ls.forEach(p=>{h+='<div class="ladder">'+p.map((v,k)=>(k?"<i>→</i>":"")+`<button data-w="${words[v]}" style="color:${COL[v]}">${words[v]}</button>`).join("")+"</div>"})}
-  else{const c=comps.find(c=>c.mem.includes(sel));h+=`<h2>Why stranded?</h2><p class="muted">${ns.length?`Trapped in an island of ${c.mem.length} words — none can reach POOP.`:"No word is one letter away from this one."}</p>`}
+  else{const c=comps.find(c=>c.mem.includes(sel));h+=`<h2>Why stranded?</h2><p class="muted">${ns.length?`Trapped in an island of ${c.mem.length} words. None can reach POOP.`:"No word is one letter away from this one."}</p>`}
   h+=`<h2>One-letter neighbours</h2><div class="chips">${ns.length?ns.slice().sort((a,b)=>(dist[a]<0?99:dist[a])-(dist[b]<0?99:dist[b])).map(chip).join(""):'<span class="muted">none</span>'}</div>`;
   b.innerHTML=h;b.querySelectorAll("[data-w]").forEach(e=>e.onclick=()=>goWord(e.dataset.w));const f=$("frame");if(f)f.onclick=()=>frame()}
 function select(i,hash=true){sel=i;onPath=i>=0&&dist[i]>=0?dag(i):new Set();nbs=new Set(i>=0?neighbors[i]:[]);route=i>=0?(ladders(i,1)[0]||[]):[];
