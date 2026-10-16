@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Poople — every road leads to POOP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0a0b10;--panel:#10121a;--card:#171a25;--line:#252938;--text:#eceef6;--mute:#8e95aa;--amber:#ffb454;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;--disp:"Bricolage Grotesque",system-ui,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+#app{height:100%;display:grid;grid-template-columns:minmax(0,1fr) 360px}
+#stage{position:relative;min-width:0;overflow:hidden}canvas{display:block;touch-action:none;cursor:grab}canvas.drag{cursor:grabbing}
+.hud{position:absolute;display:flex;gap:8px;pointer-events:none;font:500 12px var(--mono);color:var(--mute)}
+.hud span,.hud button{background:#0f111add;backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:999px;padding:6px 12px;pointer-events:auto}
+#hudTop{left:16px;top:14px}#hudBot{left:16px;bottom:14px}#hudBot button{color:var(--text);font:inherit;cursor:pointer}#hudBot button:hover{border-color:var(--amber);color:var(--amber)}
+#tip{position:absolute;pointer-events:none;background:#0d0f16f2;border:1px solid var(--line);border-radius:10px;padding:6px 10px;font:700 14px var(--mono);display:none;white-space:nowrap}#tip small{display:block;font:500 11px system-ui;color:var(--mute)}
+aside{overflow:auto;background:var(--panel);border-left:1px solid var(--line);padding:22px 20px 28px}
+h1{font:800 34px/1 var(--disp);letter-spacing:-.02em;margin:0}h1 b{color:var(--amber)}
+.sub{color:var(--mute);margin:8px 0 0}.sub b{color:var(--text);font-family:var(--mono)}
+h2{font:700 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin:24px 0 10px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0}.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}.stat strong{display:block;font:800 22px var(--disp)}.stat small{color:var(--mute);font-size:11px}
+.row{display:flex;gap:8px}input,button{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px}input{flex:1;min-width:0;font-family:var(--mono);text-transform:lowercase}button{cursor:pointer}button:hover{border-color:#5b6482}
+button.pri{background:var(--amber);color:#1a1205;border-color:var(--amber);font-weight:700}:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.check{display:flex;gap:8px;align-items:center;margin-top:12px;color:var(--mute);font-size:12px}.check input{flex:none}
+.bar{height:10px;border-radius:6px;margin:4px 0 6px}.scale{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--mute)}.legend{display:flex;gap:14px;margin-top:10px;font-size:12px;color:var(--mute)}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.title{display:flex;justify-content:space-between;align-items:center;font:800 40px var(--mono);letter-spacing:.04em}.pill{font:700 12px var(--mono);letter-spacing:0;background:var(--amber);color:#1a1205;border-radius:99px;padding:4px 10px}.pill.bad{background:#59617a;color:#fff}
+.ladder{display:flex;flex-wrap:wrap;align-items:center;gap:2px;margin:6px 0;padding:8px 10px;background:var(--card);border:1px solid var(--line);border-radius:10px}.ladder button{background:none;border:0;padding:3px 5px;font:700 14px var(--mono)}.ladder i{color:#555d75;font-style:normal}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font:700 13px var(--mono);border-radius:99px;padding:4px 10px}.hard{display:grid;grid-template-columns:1fr 1fr;gap:6px}.hard button{font:700 13px var(--mono);text-align:left}.hard small{float:right;color:var(--mute)}
+.muted{color:var(--mute)}.hr{height:1px;background:var(--line);margin:20px 0}
+@media(max-width:800px){html,body{overflow:auto}#app{display:flex;flex-direction:column;height:auto}#stage{height:62vh;flex:none}aside{border:0;border-top:1px solid var(--line);overflow:visible}}
+</style></head><body><div id="app">
+<main id="stage"><canvas id="graph" aria-label="Poople word ladder graph"></canvas>
+<div class="hud" id="hudTop"><span>drag to pan · scroll to zoom · click a word</span><span id="zoom">100%</span></div>
+<div class="hud" id="hudBot"><button id="home">⌖ Overview</button><button id="cut">☠ Cut-off words</button><button id="rand">⚄ Random word</button></div>
+<div id="tip"></div></main>
+<aside><h1>Poo<b>ple</b></h1><p class="sub">Change one letter at a time. Every real word must lead to <b>POOP</b>.</p>
+<div class="stats"><div class="stat"><strong id="total">–</strong><small>words</small></div><div class="stat"><strong id="reach">–</strong><small>reach POOP</small></div><div class="stat"><strong id="stuck">–</strong><small>stranded</small></div></div>
+<div class="row"><input id="search" list="wl" placeholder="find a word…" autocomplete="off" spellcheck="false" aria-label="Search word"><datalist id="wl"></datalist><button class="pri" id="go">Go</button></div>
+<label class="check"><input type="checkbox" id="all"> Show every one-letter link (busy)</label>
+<h2>Moves from POOP</h2><div class="bar" id="bar"></div><div class="scale"><span>1</span><span id="maxd"></span></div>
+<div class="legend"><span><i class="dot" style="background:#ffb454"></i>target</span><span><i class="dot" style="background:#6b7287"></i>can't reach</span></div>
+<div id="details"></div>
+<div id="intro"><h2>How to read it</h2><p class="muted">POOP sits in the middle. Each ring is one more move away, and every word is a short line of its colour pointing back along its fastest route. Zoom in and every word is spelled out.</p>
+<h2>Hardest starts</h2><div class="hard" id="hardest"></div><h2>Stranded words</h2><div class="chips" id="strand"></div></div>
+</aside></div>
+<script src="docs/graph.js"></script><script src="app.js"></script></body></html>
